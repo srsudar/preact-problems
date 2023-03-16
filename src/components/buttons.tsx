@@ -1,37 +1,19 @@
-import { ComponentChild, ComponentProps, h, JSX, Ref, VNode } from 'preact';
+import { ComponentProps, h, Ref, VNode } from 'preact';
 import { forwardRef } from 'preact/compat';
 
 export type UnstyledButtonProps = {
   href?: string;
-  localNavigation?: boolean;
-  newTab?: boolean;
-  resetCss?: boolean;
 } & ComponentProps<'button'>;
 
 export const UnstyledButton = forwardRef<HTMLButtonElement, UnstyledButtonProps>(
   (
-    { onClick, href, localNavigation, newTab, className, resetCss, ...props }: UnstyledButtonProps,
+    { onClick, href, className, ...props }: UnstyledButtonProps,
     ref: Ref<HTMLButtonElement>
   ): VNode => {
-    const handleClick = href
-      ? (event: JSX.TargetedMouseEvent<HTMLButtonElement>) => {
-          if (onClick) {
-            // unclear why TS thinks event.target can be null here
-            onClick.call(event.target, event);
-            if (event.defaultPrevented) {
-              return;
-            }
-          }
-        }
-      : onClick;
     return (
       <button
-        tabIndex={0}
-        type="button"
         ref={ref}
-        onClick={handleClick}
-        // for testing
-        data-href={href}
+        onClick={onClick}
         {...props}
       />
     );
@@ -39,50 +21,22 @@ export const UnstyledButton = forwardRef<HTMLButtonElement, UnstyledButtonProps>
 );
 
 export type ButtonProps = UnstyledButtonProps & {
-  priority?: 'primary' | 'secondary' | 'primary-theme' | 'destructive';
-  size?: 'small' | 'medium' | 'large';
-  fill?: 'filled' | 'outline' | 'empty';
-  outline?: 'none';
-  allCaps?: boolean;
-  rounded?: boolean;
-  disabled?: boolean;
-  grow?: boolean;
-  leftIcon?: ComponentChild;
-  rightIcon?: ComponentChild;
-  full?: boolean;
-  hiddenInput?: ComponentChild;
+  extraClass?: string;
 };
 
 // eslint-disable-next-line prefer-arrow-callback
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
-    className,
-    priority = 'primary',
-    // size = 'medium',
-    fill = 'filled',
-    outline,
-    rounded,
-    disabled,
-    grow,
-    leftIcon,
-    rightIcon,
-    allCaps,
-    children,
-    full,
-    hiddenInput,
+    extraClass,
     ...props
   }: ButtonProps,
   ref?: Ref<HTMLButtonElement>
 ) {
   return (
     <UnstyledButton
-      disabled={disabled}
       ref={ref}
       {...props}
     >
-      {leftIcon}
-      {rightIcon}
-      {hiddenInput}
     </UnstyledButton>
   );
 });
